@@ -1,7 +1,17 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import { LoginForm } from '@/features/auth/components/login-form'
+import { useAuthStore } from '@/features/auth/store/auth.store'
 
 export const Route = createFileRoute('/login')({
+  beforeLoad: () => {
+    const { user, isAuthenticated } = useAuthStore.getState()
+
+    if (isAuthenticated && user) {
+      throw redirect({
+        to: user.role === 'admin' ? '/admin' : '/',
+      })
+    }
+  },
   component: LoginPage,
 })
 

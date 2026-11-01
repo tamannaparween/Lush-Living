@@ -1,4 +1,21 @@
-import type { AuthCredentials, AuthUser } from '../types/auth.types'
+import type { AuthCredentials, AuthUser, UserRole } from '../types/auth.types'
+
+export function getDemoUserByRole(
+  role: UserRole,
+): AuthUser | undefined {
+  const user = DEMO_USERS.find(
+    (demoUser) => demoUser.role === role,
+  )
+
+  if (!user) return undefined
+
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+  }
+}
 
 const DEMO_USERS = [
   {

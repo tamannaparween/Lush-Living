@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, redirect, useNavigate, Link } from '@tanstack/react-router'
 import {
   LayoutDashboard,
   Package,
@@ -36,8 +36,8 @@ export const Route = createFileRoute('/admin')({
 })
 
 const navigation = [
-  { label: 'Dashboard', icon: LayoutDashboard, active: true },
-  { label: 'Products', icon: Package },
+  { label: 'Dashboard', icon: LayoutDashboard, to: '/admin' },
+  { label: 'Products', icon: Package, to: '/admin/products' },
   { label: 'Categories', icon: Tags },
   { label: 'Inventory', icon: Boxes },
   { label: 'Orders', icon: ShoppingCart },
@@ -84,7 +84,7 @@ function AdminDashboard() {
 
   return (
     <div className="flex min-h-screen bg-[#F7F6F0] text-[#26372D]">
-      <aside className="flex w-16 shrink-0 flex-col bg-[#173D30] px-2 py-7 text-white md:w-64 md:px-5">
+      <aside className="flex w-16 shrink-0 flex-col bg-[#173D30] px-2 py-7 text-white transition-all duration-500 ease-in-out sm:w-20 sm:px-3 md:w-56 md:px-4 lg:w-64 lg:px-5">
         <div className="mb-10 flex items-center justify-center gap-3 md:justify-start">
             <Leaf size={28} className="shrink-0" />
             <div className="hidden md:block">
@@ -102,18 +102,16 @@ function AdminDashboard() {
             const Icon = item.icon
 
             return (
-              <div
-                  key={item.label}
-                  title={item.label}
-                  className={`flex items-center justify-center gap-3 rounded-lg px-3 py-3 text-sm md:justify-start ${
-                    item.active
-                      ? 'bg-[#315B46] font-medium text-white'
-                      : 'text-green-100'
-                  }`}
-                >
-                  <Icon size={19} className="shrink-0" />
-                  <span className="hidden md:inline">{item.label}</span>
-                </div>
+              <Link
+                key={item.label}
+                to={item.to ?? '/admin'}
+                title={item.label}
+                className="flex items-center justify-center gap-3 rounded-lg px-3 py-3 text-sm text-green-100 md:justify-start [&.active]:bg-[#315B46] [&.active]:font-medium [&.active]:text-white">
+                <Icon size={19} className="shrink-0" />
+                <span className="hidden overflow-hidden whitespace-nowrap transition-all duration-500 md:inline">
+                  {item.label}
+                </span>
+              </Link>
             )
           })}
         </nav>

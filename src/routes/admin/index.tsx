@@ -19,8 +19,9 @@ import {
 import { useAuthStore } from '@/features/auth/store/auth.store'
 import { getDemoUserByRole } from '@/features/auth/services/auth'
 import { getProducts } from '@/features/products/services/product.service'
+import StatCard from './-components/stat-card'
 
-export const Route = createFileRoute('/admin')({
+export const Route = createFileRoute('/admin/')({
   beforeLoad: () => {
     const { user, isAuthenticated } = useAuthStore.getState()
 
@@ -184,17 +185,8 @@ function AdminDashboard() {
           </div>
         </header>
 
-        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {stats.map((stat) => (
-            <article
-              key={stat.label}
-              className="rounded-xl border border-[#E8E8DF] bg-white p-5 shadow-sm"
-            >
-              <p className="text-sm text-[#718075]">{stat.label}</p>
-              <h3 className="mt-3 text-2xl font-semibold">{stat.value}</h3>
-              <p className="mt-1 text-xs text-[#718075]">{stat.note}</p>
-            </article>
-          ))}
+        <section >
+          <StatCard stats={stats} />
         </section>
 
         <section className="mt-6 grid gap-6 xl:grid-cols-3">

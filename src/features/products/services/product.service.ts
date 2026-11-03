@@ -30,3 +30,8 @@ export function getProductById(id: string): Product | undefined {
 export function getProductBySlug(slug: string): Product | undefined {
   return getProducts().find((product) => product.slug === slug)
 }
+
+export function addProduct(product: Product): void {
+  const products = getProducts()
+  saveProducts([...products, product])
+}

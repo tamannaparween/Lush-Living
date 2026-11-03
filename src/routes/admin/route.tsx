@@ -99,14 +99,17 @@ function AdminLayout() {
         <nav className="flex flex-col gap-2">
           {navigation.map((item) => {
             const Icon = item.icon
-            const isActive = item.to === pathname
-
+            const isActive =
+                item.to === '/admin'
+                    ? pathname === '/admin'
+                    : item.to
+                    ? pathname.startsWith(item.to)
+                    : false
             return item.to ? (
               <Link
                 key={item.label}
                 to={item.to}
                 title={item.label}
-                activeOptions={{ exact: true }}
                 className={`flex items-center justify-center gap-3 rounded-lg px-3 py-3 text-sm md:justify-start ${
                   isActive
                     ? 'bg-transparent font-medium text-white'

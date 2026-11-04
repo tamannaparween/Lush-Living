@@ -6,9 +6,10 @@ import {
   Package,
   CheckCircle2,
   AlertTriangle,
+  Trash2,
 } from 'lucide-react'
 
-import { getProducts } from '@/features/products/services/product.service'
+import { getProducts, deleteProduct, } from '@/features/products/services/product.service'
 import { getCategories } from '@/features/categories/services/category.service'
 
 export const Route = createFileRoute('/admin/products/')({
@@ -19,7 +20,18 @@ function ProductsPage() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
 
-  const products = getProducts()
+  const [products, setProducts] = useState(getProducts)
+  function handleDelete(id: string, name: string) {
+  const confirmed = window.confirm(
+    `Are you sure you want to delete "${name}"?`,
+  )
+
+  if (!confirmed) return
+
+  deleteProduct(id)
+  setProducts(getProducts())
+}
+
   const categories = getCategories()
 
   const filteredProducts = products.filter((product) => {
@@ -176,6 +188,14 @@ function ProductsPage() {
                   >
                     Edit
                   </Link>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(product.id, product.name)}
+                    className="inline-flex items-center gap-1 rounded-lg border border-red-200 px-3 py-2 text-xs font-medium text-red-600 transition hover:bg-red-50"
+                  >
+                    <Trash2 size={15} />
+                    Delete
+                  </button>
                 </div>
               )
             })

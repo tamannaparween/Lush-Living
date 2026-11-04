@@ -35,3 +35,18 @@ export function addProduct(product: Product): void {
   const products = getProducts()
   saveProducts([...products, product])
 }
+
+export function updateProduct(updatedProduct: Product): void {
+  const products = getProducts()
+
+  const updatedProducts = products.map((product) =>
+    product.id === updatedProduct.id ? updatedProduct : product,
+  )
+
+  saveProducts(updatedProducts)
+}
+
+export function deleteProduct(id: string): void {
+  const products = getProducts()
+  saveProducts(products.filter((product) => product.id !== id))
+}

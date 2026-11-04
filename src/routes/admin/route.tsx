@@ -43,7 +43,7 @@ export const Route = createFileRoute('/admin')({
 const navigation = [
   { label: 'Dashboard', icon: LayoutDashboard, to: '/admin' },
   { label: 'Products', icon: Package, to: '/admin/products' },
-  { label: 'Categories', icon: Tags },
+  { label: 'Categories', icon: Tags, to: '/admin/categories' },
   { label: 'Inventory', icon: Boxes },
   { label: 'Orders', icon: ShoppingCart },
   { label: 'Customers', icon: Users },

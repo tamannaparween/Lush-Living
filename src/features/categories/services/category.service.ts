@@ -19,3 +19,23 @@ export function getActiveCategories(): Category[] {
 export function getCategoryById(id: string): Category | undefined {
   return getCategories().find((category) => category.id === id)
 }
+
+export function addCategory(category: Category): void {
+  const categories = getCategories()
+  saveCategories([...categories, category])
+}
+
+export function updateCategory(updatedCategory: Category): void {
+  const categories = getCategories()
+
+  const updatedCategories = categories.map((category) =>
+    category.id === updatedCategory.id ? updatedCategory : category,
+  )
+
+  saveCategories(updatedCategories)
+}
+
+export function deleteCategory(id: string): void {
+  const categories = getCategories()
+  saveCategories(categories.filter((category) => category.id !== id))
+}

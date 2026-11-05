@@ -1,5 +1,8 @@
 import { useState } from 'react'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+
 import {
   Plus,
   Search,
@@ -9,8 +12,33 @@ import {
   Trash2,
 } from 'lucide-react'
 
-import { getProducts, deleteProduct, } from '@/features/products/services/product.service'
-import { getCategories } from '@/features/categories/services/category.service'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog'
+
+import {
+  getProducts,
+  deleteProduct,
+  addProduct,
+  updateProduct,
+} from '@/features/products/services/product.service'
+
+import {
+  getCategories,
+  getActiveCategories,
+} from '@/features/categories/services/category.service'
+
+import {
+  productSchema,
+  type ProductFormValues,
+} from '@/features/products/schemas/product.schema'
+
+import type { Product } from '@/features/products/types/product.types'
 
 export const Route = createFileRoute('/admin/products/')({
   component: ProductsPage,
@@ -20,7 +48,36 @@ function ProductsPage() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
 
+  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null)
+
+  const defaultProductValues: Partial<ProductFormValues> = {
+    name: '',
+    description: '',
+    price: undefined,
+    categoryId: '',
+    stock: 0,
+    sku: '',
+    status: 'draft',
+    featured: false,
+  }
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    getValues,
+    formState: { errors },
+  } = useForm<ProductFormValues>
+  
+  ({
+    resolver: zodResolver(productSchema),
+    defaultValues: defaultProductValues,
+  })
+
   const [products, setProducts] = useState(getProducts)
+
   function handleDelete(id: string, name: string) {
   const confirmed = window.confirm(
     `Are you sure you want to delete "${name}"?`,
@@ -31,6 +88,63 @@ function ProductsPage() {
   deleteProduct(id)
   setProducts(getProducts())
 }
+
+  function handleOpenAdd() {
+    setEditingProduct(null)
+    reset(defaultProductValues)
+    setIsFormOpen(true)
+  }
+
+  function handleOpenEdit(product: Product) {
+    setEditingProduct(product)
+
+    reset({
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      compareAtPrice: product.compareAtPrice,
+      categoryId: product.categoryId,
+      stock: product.stock,
+      sku: product.sku,
+      status: product.status,
+      featured: product.featured,
+    })
+
+    setIsFormOpen(true)
+  }
+
+  function handleCloseForm() {
+    setIsFormOpen(false)
+    setEditingProduct(null)
+    reset(defaultProductValues)
+  }
+
+  function onSubmit(values: ProductFormValues) {
+    if (editingProduct) {
+      updateProduct({
+        ...editingProduct,
+        ...values,
+        slug: values.name.toLowerCase().trim().replace(/\s+/g, '-'),
+        updatedAt: new Date().toISOString(),
+      })
+    } else {
+      const now = new Date().toISOString()
+
+      const product: Product = {
+        ...values,
+        id: crypto.randomUUID(),
+        slug: values.name.toLowerCase().trim().replace(/\s+/g, '-'),
+        images: [],
+        createdAt: now,
+        updatedAt: now,
+      }
+
+      addProduct(product)
+    }
+
+    setProducts(getProducts())
+    handleCloseForm()
+  }
 
   const categories = getCategories()
 
@@ -63,13 +177,14 @@ function ProductsPage() {
           </p>
         </div>
 
-        <Link
-          to="/admin/products/add"
+        <button
+          type="button"
+          onClick={handleOpenAdd}
           className="inline-flex items-center gap-2 rounded-lg bg-[#315B46] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#244A38]"
         >
           <Plus size={18} />
           Add Product
-        </Link>
+        </button>
       </div>
 
       <section className="grid gap-4 sm:grid-cols-3">
@@ -181,13 +296,13 @@ function ProductsPage() {
                     </span>
                   </div>
 
-                  <Link
-                    to="/admin/products/$productId/edit"
-                    params={{ productId: product.id }}
+                  <button
+                    type="button"
+                    onClick={() => handleOpenEdit(product)}
                     className="rounded-lg border border-[#E8E8DF] px-3 py-2 text-xs font-medium transition hover:bg-[#F7F6F0]"
                   >
                     Edit
-                  </Link>
+                  </button>
                   <button
                     type="button"
                     onClick={() => handleDelete(product.id, product.name)}
@@ -210,7 +325,231 @@ function ProductsPage() {
           )}
         </div>
       </section>
+      <Dialog.Root
+        open={isFormOpen}
+        onOpenChange={(open) => {
+          if (!open) handleCloseForm()
+        }}
+      >
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>
+              {editingProduct ? 'Edit Product' : 'Add Product'}
+            </DialogTitle>
+
+            <DialogDescription>
+              {editingProduct
+                ? 'Update the details of your product.'
+                : 'Add a new product to your store.'}
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <ProductFormField label="Product Name" error={errors.name?.message}>
+                <input
+                  {...register('name')}
+                  className="w-full rounded-lg border border-[#E8E8DF] px-3 py-2 text-sm outline-none focus:border-[#315B46]"
+                  placeholder="Enter product name"
+                />
+              </ProductFormField>
+
+              <ProductFormField label="Category" error={errors.categoryId?.message}>
+                <select
+                  {...register('categoryId')}
+                  className="w-full rounded-lg border border-[#E8E8DF] px-3 py-2 text-sm outline-none focus:border-[#315B46]"
+                >
+                  <option value="">Select category</option>
+                  {getActiveCategories().map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+              </ProductFormField>
+            </div>
+
+            <ProductFormField label="Description" error={errors.description?.message}>
+              <textarea
+                {...register('description')}
+                rows={3}
+                className="w-full rounded-lg border border-[#E8E8DF] px-3 py-2 text-sm outline-none focus:border-[#315B46]"
+                placeholder="Enter product description"
+              />
+            </ProductFormField>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <ProductFormField label="Price (₹)" error={errors.price?.message}>
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  placeholder="₹ 0.00"
+                  maxLength={8}
+                  {...register('price')}
+                  onChange={(event) => {
+                    const value = limitPriceInput(event.target.value)
+
+                    event.target.value = value
+
+                    setValue(
+                      'price',
+                      value === '' ? (undefined as unknown as number) : Number(value),
+                      {
+                        shouldValidate: true,
+                        shouldDirty: true,
+                      },
+                    )
+                  }}
+                  className="w-full rounded-lg border border-[#E8E8DF] px-3 py-2 text-sm outline-none focus:border-[#315B46]"
+                />
+              </ProductFormField>
+
+              <ProductFormField
+                label="Compare At Price (₹)"
+                error={errors.compareAtPrice?.message}
+              >
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  placeholder="₹ 0.00"
+                  maxLength={8}
+                  {...register('compareAtPrice')}
+                  onChange={(event) => {
+                    const value = limitPriceInput(event.target.value)
+
+                    event.target.value = value
+
+                    setValue(
+                      'compareAtPrice',
+                      value === '' ? undefined : Number(value),
+                      {
+                        shouldValidate: true,
+                        shouldDirty: true,
+                      },
+                    )
+                  }}
+                  className="w-full rounded-lg border border-[#E8E8DF] px-3 py-2 text-sm outline-none focus:border-[#315B46]"
+                />
+              </ProductFormField>
+
+              <ProductFormField label="SKU" error={errors.sku?.message}>
+                <input
+                  {...register('sku')}
+                  className="w-full rounded-lg border border-[#E8E8DF] px-3 py-2 text-sm outline-none focus:border-[#315B46]"
+                  placeholder="Enter SKU"
+                />
+              </ProductFormField>
+
+              <ProductFormField label="Stock">
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={3}
+                  placeholder="Enter stock (0–100)"
+                  {...register('stock')}
+                  onChange={(event) => {
+                    const value = event.target.value.replace(/\D/g, '').slice(0, 3)
+
+                    if (value !== '' && Number(value) > 100) {
+                      event.target.value = String(getValues('stock') ?? 0)
+                      return
+                    }
+
+                    event.target.value = value
+
+                    setValue('stock', value === '' ? 0 : Number(value), {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                    })
+                  }}
+                  className="w-full rounded-lg border border-[#E8E8DF] px-3 py-2 text-sm outline-none focus:border-[#315B46]"
+                />
+              </ProductFormField>
+            </div>
+
+            <ProductFormField label="Status" error={errors.status?.message}>
+              <select
+                {...register('status')}
+                className="w-full rounded-lg border border-[#E8E8DF] px-3 py-2 text-sm outline-none focus:border-[#315B46]"
+              >
+                <option value="draft">Draft</option>
+                <option value="active">Active</option>
+                <option value="archived">Archived</option>
+              </select>
+            </ProductFormField>
+
+            <label className="flex items-center gap-2 text-sm font-medium">
+              <input
+                type="checkbox"
+                {...register('featured')}
+                className="h-4 w-4 accent-[#315B46]"
+              />
+              Featured Product
+            </label>
+
+            <DialogFooter>
+              <button
+                type="button"
+                onClick={handleCloseForm}
+                className="rounded-lg border border-[#E8E8DF] px-4 py-2 text-sm font-medium hover:bg-[#F7F6F0]"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="submit"
+                className="rounded-lg bg-[#315B46] px-4 py-2 text-sm font-medium text-white hover:bg-[#244A38]"
+              >
+                {editingProduct ? 'Update Product' : 'Save Product'}
+              </button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog.Root>
     </div>
+  )
+}
+
+function limitPriceInput(value: string) {
+  let sanitized = value.replace(/[^\d.]/g, '')
+
+  const decimalIndex = sanitized.indexOf('.')
+
+  if (decimalIndex !== -1) {
+    sanitized =
+      sanitized.slice(0, decimalIndex + 1) +
+      sanitized.slice(decimalIndex + 1).replace(/\./g, '')
+  }
+
+  const [integerPart, decimalPart] = sanitized.split('.')
+
+  const limitedInteger = integerPart.slice(0, 5)
+
+  if (decimalIndex === -1) {
+    return limitedInteger
+  }
+
+  return `${limitedInteger}.${(decimalPart ?? '').slice(0, 2)}`
+}
+
+function ProductFormField({
+  label,
+  error,
+  children,
+}: {
+  label: string
+  error?: string
+  children: React.ReactNode
+}) {
+  return (
+    <label className="block space-y-2 text-sm font-medium">
+      {label}
+      {children}
+
+      {error && (
+        <p className="text-xs text-red-600">{error}</p>
+      )}
+    </label>
   )
 }
 

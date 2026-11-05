@@ -47,7 +47,7 @@ const navigation = [
   { label: 'Inventory', icon: Boxes, to: '/admin/inventory' },
   { label: 'Orders', icon: ShoppingCart, to: '/admin/orders' },
   { label: 'Customers', icon: Users, to: '/admin/customers' },
-  { label: 'Settings', icon: Settings },
+  { label: 'Settings', icon: Settings, to: '/admin/settings' },
 ]
 
 function AdminLayout() {

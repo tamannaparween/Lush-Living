@@ -46,7 +46,7 @@ const navigation = [
   { label: 'Categories', icon: Tags, to: '/admin/categories' },
   { label: 'Inventory', icon: Boxes, to: '/admin/inventory' },
   { label: 'Orders', icon: ShoppingCart, to: '/admin/orders' },
-  { label: 'Customers', icon: Users },
+  { label: 'Customers', icon: Users, to: '/admin/customers' },
   { label: 'Settings', icon: Settings },
 ]
 

@@ -35,63 +35,50 @@ function HomePage() {
 
       <main>
         {/* Hero Section */}
-        <section
-          id="home"
-          className="overflow-hidden bg-gradient-to-br from-[#F0F4E9] via-[#F8F8F0] to-[#E4EDDC]"
-        >
-          <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-20 sm:px-6 md:grid-cols-2 md:py-28 lg:px-8">
-            <div>
-              <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-green-800 shadow-sm">
-                <Leaf className="size-4" />
-                Bring nature into your life
-              </span>
+          <section
+            id="home"
+            className="relative isolate h-[600px] overflow-hidden bg-gradient-to-br from-[#F0F4E9] via-[#F8F8F0] to-[#E4EDDC]"
+          >
+            {/* Hero Background Carousel */}
+            <StorefrontCarousel />
 
-              <h1 className="mt-6 max-w-xl text-4xl leading-tight font-bold tracking-tight text-[#193D25] sm:text-5xl lg:text-6xl">
-                Bring Nature
-                <span className="block text-[#668653]">
-                  Closer to Home
+            <div className="relative z-10 mx-auto grid h-full w-full max-w-7xl grid-cols-1 items-center px-4 sm:px-6 md:grid-cols-2 lg:px-8">
+              {/* Hero Content */}
+              <div className="w-full">
+                <span className="inline-flex items-center gap-2 rounded-full bg-[#E8EBDD]/85 px-4 py-2 text-sm font-medium text-[#193D25] shadow-sm">
+                  <Leaf className="size-4" />
+                  Bring nature into your life
                 </span>
-              </h1>
 
-              <p className="mt-6 max-w-lg text-base leading-7 text-stone-600 sm:text-lg">
-                Discover beautiful plants and gardening essentials
-                to create a greener, happier living space.
-              </p>
+                <h1 className="mt-6 max-w-xl text-4xl leading-tight font-bold tracking-tight text-[#F4F0E5] sm:text-5xl lg:text-6xl">
+                  Bring Nature
+                  <span className="block text-[#D6E2C8]">
+                    Closer to Home
+                  </span>
+                </h1>
 
-              <a
-                href="#featured"
-                className="mt-8 inline-flex items-center gap-3 rounded-full bg-[#285B35] px-7 py-3.5 font-semibold text-white transition hover:bg-[#1D4729]"
-              >
-                Explore Collection
-                <ArrowRight className="size-5" />
-              </a>
-            </div>
+                <p className="mt-6 max-w-lg text-base leading-7 text-[#F0F0E7] sm:text-lg">
+                  Discover beautiful plants and gardening essentials
+                  to create a greener, happier living space.
+                </p>
 
-            {/* CSS-based Botanical Illustration */}
-            <div className="relative flex min-h-64 items-center justify-center sm:min-h-80">
-              <div className="absolute size-64 rounded-full bg-[#D8E6CC] blur-2xl sm:size-80" />
-
-              <div className="relative flex size-56 items-center justify-center rounded-full border border-white/70 bg-white/40 shadow-xl backdrop-blur-sm sm:size-72">
-                <div className="flex size-40 items-center justify-center rounded-full bg-[#E8F0E1] sm:size-52">
-                  <Sprout
-                    className="size-28 text-[#47764B] sm:size-36"
-                    strokeWidth={1.2}
-                  />
-                </div>
+                <a
+                  href="#featured"
+                  className="mt-8 inline-flex items-center gap-3 rounded-full bg-[#285B35] px-7 py-3.5 font-semibold text-white transition hover:bg-[#1D4729]"
+                >
+                  Explore Collection
+                  <ArrowRight className="size-5" />
+                </a>
               </div>
 
-              <span className="absolute bottom-5 left-4 rounded-xl bg-white/90 px-4 py-3 text-sm font-medium text-green-900 shadow-md sm:bottom-8 sm:left-8">
-                Grow something beautiful
-              </span>
-
-              <Leaf className="absolute top-5 right-8 size-9 rotate-45 text-[#79966B]" />
-              <Leaf className="absolute right-4 bottom-12 size-7 -rotate-45 text-[#9CAF8C]" />
+              {/* Empty space for desktop layout */}
+              <div
+                aria-hidden="true"
+                className="hidden md:block"
+              />
             </div>
-          </div>
-        </section>
+          </section>
 
-        {/* Plant Image Carousel */}
-        <StorefrontCarousel />   
 
         {/* About Lush Living */}
         <StorefrontAbout /> 

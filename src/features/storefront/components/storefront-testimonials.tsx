@@ -1,104 +1,112 @@
-import { useEffect, useState } from 'react'
-import { ArrowLeft, ArrowRight, Leaf, Quote } from 'lucide-react'
+import { useEffect, useState } from "react";
+import { ArrowLeft, ArrowRight, Leaf, Quote } from "lucide-react";
 
 const testimonials = [
   {
-    name: 'Aarav Sharma',
-    role: 'Plant Enthusiast',
-    initials: 'AS',
+    name: "Aarav Sharma",
+    role: "Plant Enthusiast",
+    initials: "AS",
     review:
-      'I love how plants bring life to my home. Finding beautiful greenery for my space feels so exciting!',
+      "I love how plants bring life to my home. Finding beautiful greenery for my space feels so exciting!",
   },
   {
-    name: 'Priya Verma',
-    role: 'Home Gardener',
-    initials: 'PV',
+    name: "Priya Verma",
+    role: "Home Gardener",
+    initials: "PV",
     review:
-      'Creating my little green corner has been such a refreshing experience. Every plant makes my space feel special.',
+      "Creating my little green corner has been such a refreshing experience. Every plant makes my space feel special.",
   },
   {
-    name: 'Riya Mehta',
-    role: 'Nature Lover',
-    initials: 'RM',
+    name: "Riya Mehta",
+    role: "Nature Lover",
+    initials: "RM",
     review:
-      'I enjoy exploring different plants and gardening essentials. There is always something lovely to discover.',
+      "I enjoy exploring different plants and gardening essentials. There is always something lovely to discover.",
   },
   {
-    name: 'Kabir Malhotra',
-    role: 'Garden Lover',
-    initials: 'KM',
+    name: "Kabir Malhotra",
+    role: "Garden Lover",
+    initials: "KM",
     review:
-      'Lush Living inspires me to bring more greenery into my home. Exploring plants has become my favorite hobby!',
+      "Lush Living inspires me to bring more greenery into my home. Exploring plants has become my favorite hobby!",
   },
-]
+];
 
 const sliderItems = [
-  { ...testimonials[testimonials.length - 1], key: 'last-clone' },
+  { ...testimonials[testimonials.length - 1], key: "last-clone" },
   ...testimonials.map((item) => ({ ...item, key: item.name })),
-  { ...testimonials[0], key: 'first-clone' },
-]
+  { ...testimonials[0], key: "first-clone" },
+];
 
 export function StorefrontTestimonials() {
-  const [currentSlide, setCurrentSlide] = useState(1)
-  const [transitionEnabled, setTransitionEnabled] = useState(true)
+  const [currentSlide, setCurrentSlide] = useState(1);
+  const [transitionEnabled, setTransitionEnabled] = useState(true);
 
   const activeIndex =
-    (currentSlide - 1 + testimonials.length) % testimonials.length
+    (currentSlide - 1 + testimonials.length) % testimonials.length;
 
   const showNext = () => {
-    setTransitionEnabled(true)
-    setCurrentSlide((current) => current + 1)
-  }
+    setTransitionEnabled(true);
+    setCurrentSlide((current) => current + 1);
+  };
 
   const showPrevious = () => {
-    setTransitionEnabled(true)
-    setCurrentSlide((current) => current - 1)
-  }
+    setTransitionEnabled(true);
+    setCurrentSlide((current) => current - 1);
+  };
 
   const goToSlide = (index: number) => {
-    setTransitionEnabled(true)
-    setCurrentSlide(index + 1)
-  }
+    setTransitionEnabled(true);
+    setCurrentSlide(index + 1);
+  };
 
   const handleTransitionEnd = (
     event: React.TransitionEvent<HTMLDivElement>,
   ) => {
     if (
-        event.target !== event.currentTarget ||
-        event.propertyName !== 'transform'
+      event.target !== event.currentTarget ||
+      event.propertyName !== "transform"
     ) {
-        return
+      return;
     }
 
-    if (currentSlide === testimonials.length + 1) {
-        setTransitionEnabled(false)
-        setCurrentSlide(1)
-    } else if (currentSlide === 0) {
-        setTransitionEnabled(false)
-        setCurrentSlide(testimonials.length)
+    if (currentSlide >= testimonials.length + 1) {
+      setTransitionEnabled(false);
+      setCurrentSlide(1);
+    } else if (currentSlide <= 0) {
+      setTransitionEnabled(false);
+      setCurrentSlide(testimonials.length);
     }
-  }
+  };
 
-  // Re-enable transition after jumping from a cloned slide.
+  // Re-enable transition after resetting from a cloned slide.
   useEffect(() => {
     if (!transitionEnabled) {
-      const frame = window.requestAnimationFrame(() => {
-        setTransitionEnabled(true)
-      })
+      let secondFrame = 0;
 
-      return () => window.cancelAnimationFrame(frame)
+      const firstFrame = window.requestAnimationFrame(() => {
+        secondFrame = window.requestAnimationFrame(() => {
+          setTransitionEnabled(true);
+        });
+      });
+
+      return () => {
+        window.cancelAnimationFrame(firstFrame);
+        window.cancelAnimationFrame(secondFrame);
+      };
     }
-  }, [transitionEnabled])
+  }, [transitionEnabled]);
 
-  // Autoplay: wait 6 seconds after every slide change.
+  // Autoplay: wait 6 seconds after every completed slide reset.
   useEffect(() => {
-    const timeout = window.setTimeout(() => {
-      setTransitionEnabled(true)
-      setCurrentSlide((current) => current + 1)
-    }, 6000)
+    if (!transitionEnabled) return;
 
-    return () => window.clearTimeout(timeout)
-  }, [currentSlide])
+    const timeout = window.setTimeout(() => {
+      setCurrentSlide((current) => current + 1);
+    }, 6000);
+
+    return () => window.clearTimeout(timeout);
+  }, [currentSlide, transitionEnabled]);
 
   return (
     <section className="bg-[#FAFAF6] py-16 sm:py-20">
@@ -121,21 +129,18 @@ export function StorefrontTestimonials() {
         <div className="relative mx-auto max-w-5xl px-2 sm:px-12">
           <div className="overflow-hidden rounded-3xl">
             <div
-                className={`flex w-full ${
-                    transitionEnabled
-                    ? 'transition-transform duration-[800ms] ease-in-out'
-                    : ''
-                }`}
-                style={{
-                    transform: `translateX(-${currentSlide * 100}%)`,
-                }}
-                onTransitionEnd={handleTransitionEnd}
-              >
-                {sliderItems.map((testimonial) => (
-                    <div
-                        key={testimonial.key}
-                        className="w-full shrink-0"
-                    >
+              className={`flex w-full ${
+                transitionEnabled
+                  ? "transition-transform duration-[800ms] ease-in-out"
+                  : ""
+              }`}
+              style={{
+                transform: `translateX(-${currentSlide * 100}%)`,
+              }}
+              onTransitionEnd={handleTransitionEnd}
+            >
+              {sliderItems.map((testimonial) => (
+                <div key={testimonial.key} className="w-full shrink-0">
                   <article className="flex min-h-[310px] flex-col items-center gap-7 rounded-3xl border border-[#E3EBDD] bg-[#EEF3E9] px-7 py-10 text-[#193D25] sm:min-h-[290px] sm:flex-row sm:gap-10 sm:px-12 sm:py-12">
                     <div className="flex size-28 shrink-0 items-center justify-center bg-[#DCE9D5] text-3xl font-bold tracking-wide text-[#285B35] [clip-path:polygon(50%_0%,75%_7%,93%_25%,100%_50%,93%_75%,75%_93%,50%_100%,25%_93%,7%_75%,0%_50%,7%_25%,25%_7%)] sm:size-36">
                       {testimonial.initials}
@@ -193,14 +198,13 @@ export function StorefrontTestimonials() {
               aria-pressed={activeIndex === index}
               className={`h-2.5 rounded-full transition-all duration-300 ${
                 activeIndex === index
-                  ? 'w-8 bg-[#285B35]'
-                  : 'w-2.5 bg-[#C8D5BE] hover:bg-[#8BA77D]'
+                  ? "w-8 bg-[#285B35]"
+                  : "w-2.5 bg-[#C8D5BE] hover:bg-[#8BA77D]"
               }`}
             />
           ))}
         </div>
-
       </div>
     </section>
-  )
+  );
 }

@@ -1,12 +1,19 @@
 import { useState } from "react";
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { ArrowLeft, Leaf, Sprout } from "lucide-react";
-
+import {
+  ArrowLeft,
+  Leaf,
+  Minus,
+  Plus,
+  ShoppingCart,
+  Sprout,
+} from "lucide-react";
 import { useAuthStore } from "@/features/auth/store/auth.store";
 import { getActiveCategories } from "@/features/categories/services/category.service";
 import { getProductBySlug } from "@/features/products/services/product.service";
 import { StorefrontHeader } from "@/features/storefront/components/storefront-header";
 import { StorefrontFooter } from "@/features/storefront/components/storefront-footer";
+import { useCartStore } from "@/features/cart/store/cart.store";
 
 export const Route = createFileRoute("/products/$slug")({
   beforeLoad: () => {
@@ -31,6 +38,42 @@ function ProductDetailsPage() {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [imageError, setImageError] = useState(false);
 
+  const [quantity, setQuantity] = useState(1);
+  const [cartMessage, setCartMessage] = useState("");
+
+  const cartItem = useCartStore((state) =>
+    state.items.find((item) => item.productId === product?.id),
+  );
+
+  const addItem = useCartStore((state) => state.addItem);
+
+  const cartQuantity = cartItem?.quantity ?? 0;
+
+  const availableToAdd = product
+    ? Math.max(product.stock - cartQuantity, 0)
+    : 0;
+
+  const handleAddToCart = () => {
+    if (!product || product.stock === 0) {
+      return;
+    }
+
+    if (quantity > availableToAdd) {
+      setCartMessage(
+        `Only ${availableToAdd} more item(s) can be added to your cart.`,
+      );
+      return;
+    }
+
+    addItem(product.id, quantity);
+
+    setCartMessage(
+      `${quantity} ${product.name} added to your cart successfully!`,
+    );
+
+    setQuantity(1);
+  };
+
   const formatPrice = (price: number) =>
     new Intl.NumberFormat("en-IN", {
       style: "currency",
@@ -44,8 +87,6 @@ function ProductDetailsPage() {
     : "";
 
   const selectedImage = product?.images[selectedImageIndex];
-
-  console.log("Product Details Page Rendered:", product);
 
   if (!product || product.status !== "active") {
     return (
@@ -215,6 +256,79 @@ function ProductDetailsPage() {
                     : "In Stock"}
               </p>
             </div>
+
+            {/* Quantity Selector */}
+            <div className="mt-7">
+              <h2 className="text-sm font-semibold text-[#193D25]">Quantity</h2>
+
+              <div className="mt-3 inline-flex items-center overflow-hidden rounded-lg border border-stone-200 bg-white">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setQuantity((current) => Math.max(1, current - 1));
+                    setCartMessage("");
+                  }}
+                  disabled={quantity <= 1 || availableToAdd === 0}
+                  aria-label="Decrease quantity"
+                  className="flex size-11 items-center justify-center text-[#285B35] transition hover:bg-[#EEF3E9] disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  <Minus className="size-4" />
+                </button>
+
+                <span
+                  className="flex h-11 min-w-12 items-center justify-center border-x border-stone-200 text-sm font-semibold text-[#193D25]"
+                  aria-live="polite"
+                >
+                  {quantity}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setQuantity((current) =>
+                      Math.min(current + 1, availableToAdd),
+                    );
+                    setCartMessage("");
+                  }}
+                  disabled={quantity >= availableToAdd}
+                  aria-label="Increase quantity"
+                  className="flex size-11 items-center justify-center text-[#285B35] transition hover:bg-[#EEF3E9] disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  <Plus className="size-4" />
+                </button>
+              </div>
+
+              {availableToAdd === 0 && product.stock > 0 && (
+                <p className="mt-2 text-xs text-amber-600">
+                  You have already added all available stock to your cart.
+                </p>
+              )}
+            </div>
+
+            {/* Add to Cart */}
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              disabled={availableToAdd === 0}
+              className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#285B35] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#193D25] disabled:cursor-not-allowed disabled:bg-stone-400 sm:w-fit"
+            >
+              <ShoppingCart className="size-5" />
+
+              {product.stock === 0
+                ? "Out of Stock"
+                : availableToAdd === 0
+                  ? "Stock Limit Reached"
+                  : "Add to Cart"}
+            </button>
+
+            {cartMessage && (
+              <p
+                role="status"
+                className="mt-3 text-sm font-medium text-[#285B35]"
+              >
+                {cartMessage}
+              </p>
+            )}
 
             <p className="mt-6 text-xs leading-6 text-stone-400">
               Bring a little more nature into your everyday space with Lush

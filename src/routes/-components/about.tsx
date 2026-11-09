@@ -1,4 +1,4 @@
-import { Leaf, Sprout } from 'lucide-react'
+import { Leaf, Sprout } from "lucide-react";
 
 export function StorefrontAbout() {
   return (
@@ -22,12 +22,8 @@ export function StorefrontAbout() {
             </div>
 
             <div>
-              <p className="font-semibold text-[#193D25]">
-                Grow with nature
-              </p>
-              <p className="text-xs text-stone-500">
-                Create your green space
-              </p>
+              <p className="font-semibold text-[#193D25]">Grow with nature</p>
+              <p className="text-xs text-stone-500">Create your green space</p>
             </div>
           </div>
         </div>
@@ -45,16 +41,16 @@ export function StorefrontAbout() {
             </h2>
 
             <p className="mt-6 text-base leading-7 text-stone-600">
-              At Lush Living, we believe that plants make every space feel
-              more welcoming, peaceful and alive. Our collection brings
-              together beautiful plants and gardening essentials to help
-              you create your own green sanctuary.
+              At Lush Living, we believe that plants make every space feel more
+              welcoming, peaceful and alive. Our collection brings together
+              beautiful plants and gardening essentials to help you create your
+              own green sanctuary.
             </p>
 
             <p className="mt-4 text-base leading-7 text-stone-600">
-              Whether you are starting your first plant collection or
-              adding to an existing garden, we are here to make your
-              journey with nature a little easier and more enjoyable.
+              Whether you are starting your first plant collection or adding to
+              an existing garden, we are here to make your journey with nature a
+              little easier and more enjoyable.
             </p>
 
             <a
@@ -68,5 +64,5 @@ export function StorefrontAbout() {
         </div>
       </div>
     </section>
-  )
+  );
 }

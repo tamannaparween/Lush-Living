@@ -11,8 +11,8 @@ import {
 import { useAuthStore } from "@/features/auth/store/auth.store";
 import { getActiveCategories } from "@/features/categories/services/category.service";
 import { getProductBySlug } from "@/features/products/services/product.service";
-import { StorefrontHeader } from "@/features/storefront/components/storefront-header";
-import { StorefrontFooter } from "@/features/storefront/components/storefront-footer";
+import { StorefrontHeader } from "@/components/header";
+import { StorefrontFooter } from "@/components/footer";
 import { useCartStore } from "@/features/cart/store/cart.store";
 
 export const Route = createFileRoute("/products/$slug")({

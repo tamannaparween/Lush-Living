@@ -1,15 +1,18 @@
-import { useNavigate } from '@tanstack/react-router'
-import { useState } from 'react'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import { loginSchema, type LoginFormValues } from '../schemas/login.schema'
-import { login } from '../services/auth'
-import { useAuthStore } from '../store/auth.store'
+import { useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import {
+  loginSchema,
+  type LoginFormValues,
+} from "../../../features/auth/schemas/login.schema";
+import { login } from "../../../features/auth/services/auth";
+import { useAuthStore } from "../../../features/auth/store/auth.store";
 
 export function LoginForm() {
-  const [loginError, setLoginError] = useState<string | null>(null)
-  const navigate = useNavigate()
-  const setUser = useAuthStore((state) => state.setUser)
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const setUser = useAuthStore((state) => state.setUser);
 
   const {
     register,
@@ -18,24 +21,24 @@ export function LoginForm() {
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
-  })
+  });
 
   const onSubmit = async (values: LoginFormValues) => {
-    setLoginError(null)
+    setLoginError(null);
 
     try {
-      const user = await login(values)
-      setUser(user)
-      await navigate({  
-        to: user.role === 'admin' ? '/admin' : '/',
-      })
+      const user = await login(values);
+      setUser(user);
+      await navigate({
+        to: user.role === "admin" ? "/admin" : "/",
+      });
     } catch {
-      setLoginError('Invalid email or password')
+      setLoginError("Invalid email or password");
     }
-  }
+  };
 
   return (
     <form
@@ -50,14 +53,12 @@ export function LoginForm() {
           id="email"
           type="email"
           autoComplete="username"
-          {...register('email')}
+          {...register("email")}
           className="rounded-md border border-input bg-background px-3 py-2 outline-none focus:ring-2 focus:ring-ring"
           placeholder="Enter your email"
         />
         {errors.email && (
-          <p className="text-sm text-destructive">
-            {errors.email.message}
-          </p>
+          <p className="text-sm text-destructive">{errors.email.message}</p>
         )}
       </div>
 
@@ -69,14 +70,12 @@ export function LoginForm() {
           id="password"
           type="password"
           autoComplete="current-password"
-          {...register('password')}
+          {...register("password")}
           className="rounded-md border border-input bg-background px-3 py-2 outline-none focus:ring-2 focus:ring-ring"
           placeholder="Enter your password"
         />
         {errors.password && (
-          <p className="text-sm text-destructive">
-            {errors.password.message}
-          </p>
+          <p className="text-sm text-destructive">{errors.password.message}</p>
         )}
       </div>
 
@@ -91,8 +90,8 @@ export function LoginForm() {
         disabled={isSubmitting}
         className="rounded-md bg-primary px-4 py-2 font-medium text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {isSubmitting ? 'Signing in...' : 'Sign in'}
+        {isSubmitting ? "Signing in..." : "Sign in"}
       </button>
     </form>
-  )
+  );
 }

@@ -1,33 +1,33 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
-import { ArrowRight, Leaf, Sprout } from 'lucide-react'
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { ArrowRight, Leaf, Sprout } from "lucide-react";
 
-import { useAuthStore } from '@/features/auth/store/auth.store'
-import { getActiveCategories } from '@/features/categories/services/category.service'
-import { getFeaturedProducts } from '@/features/products/services/product.service'
-import { StorefrontHeader } from '@/features/storefront/components/storefront-header'
-import { StorefrontFooter } from '@/features/storefront/components/storefront-footer'
-import { StorefrontCarousel } from '@/features/storefront/components/storefront-carousel'
-import { StorefrontAbout } from '@/features/storefront/components/storefront-about'
-import { StorefrontTestimonials } from '@/features/storefront/components/storefront-testimonials'
+import { useAuthStore } from "@/features/auth/store/auth.store";
+import { getActiveCategories } from "@/features/categories/services/category.service";
+import { getFeaturedProducts } from "@/features/products/services/product.service";
+import { StorefrontHeader } from "@/components/header";
+import { StorefrontFooter } from "@/components/footer";
+import { StorefrontCarousel } from "@/routes/-components/carousel";
+import { StorefrontAbout } from "@/routes/-components/about";
+import { StorefrontTestimonials } from "@/routes/-components/testimonials";
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute("/")({
   beforeLoad: () => {
-    const { user, isAuthenticated } = useAuthStore.getState()
+    const { user, isAuthenticated } = useAuthStore.getState();
 
     if (!isAuthenticated || !user) {
-      throw redirect({ to: '/login' })
+      throw redirect({ to: "/login" });
     }
 
-    if (user.role !== 'customer') {
-      throw redirect({ to: '/admin' })
+    if (user.role !== "customer") {
+      throw redirect({ to: "/admin" });
     }
   },
   component: HomePage,
-})
+});
 
 function HomePage() {
-  const categories = getActiveCategories()
-  const featuredProducts = getFeaturedProducts()
+  const categories = getActiveCategories();
+  const featuredProducts = getFeaturedProducts();
 
   return (
     <div className="min-h-screen bg-[#FAFAF6]">
@@ -35,53 +35,47 @@ function HomePage() {
 
       <main>
         {/* Hero Section */}
-          <section
-            id="home"
-            className="relative isolate h-[600px] overflow-hidden bg-gradient-to-br from-[#F0F4E9] via-[#F8F8F0] to-[#E4EDDC]"
-          >
-            {/* Hero Background Carousel */}
-            <StorefrontCarousel />
+        <section
+          id="home"
+          className="relative isolate h-[600px] overflow-hidden bg-gradient-to-br from-[#F0F4E9] via-[#F8F8F0] to-[#E4EDDC]"
+        >
+          {/* Hero Background Carousel */}
+          <StorefrontCarousel />
 
-            <div className="relative z-10 mx-auto grid h-full w-full max-w-7xl grid-cols-1 items-center px-4 sm:px-6 md:grid-cols-2 lg:px-8">
-              {/* Hero Content */}
-              <div className="w-full">
-                <span className="inline-flex items-center gap-2 rounded-full bg-[#E8EBDD]/85 px-4 py-2 text-sm font-medium text-[#193D25] shadow-sm">
-                  <Leaf className="size-4" />
-                  Bring nature into your life
-                </span>
+          <div className="relative z-10 mx-auto grid h-full w-full max-w-7xl grid-cols-1 items-center px-4 sm:px-6 md:grid-cols-2 lg:px-8">
+            {/* Hero Content */}
+            <div className="w-full">
+              <span className="inline-flex items-center gap-2 rounded-full bg-[#E8EBDD]/85 px-4 py-2 text-sm font-medium text-[#193D25] shadow-sm">
+                <Leaf className="size-4" />
+                Bring nature into your life
+              </span>
 
-                <h1 className="mt-6 max-w-xl text-4xl leading-tight font-bold tracking-tight text-[#F4F0E5] sm:text-5xl lg:text-6xl">
-                  Bring Nature
-                  <span className="block text-[#D6E2C8]">
-                    Closer to Home
-                  </span>
-                </h1>
+              <h1 className="mt-6 max-w-xl text-4xl leading-tight font-bold tracking-tight text-[#F4F0E5] sm:text-5xl lg:text-6xl">
+                Bring Nature
+                <span className="block text-[#D6E2C8]">Closer to Home</span>
+              </h1>
 
-                <p className="mt-6 max-w-lg text-base leading-7 text-[#F0F0E7] sm:text-lg">
-                  Discover beautiful plants and gardening essentials
-                  to create a greener, happier living space.
-                </p>
+              <p className="mt-6 max-w-lg text-base leading-7 text-[#F0F0E7] sm:text-lg">
+                Discover beautiful plants and gardening essentials to create a
+                greener, happier living space.
+              </p>
 
-                <a
-                  href="#featured"
-                  className="mt-8 inline-flex items-center gap-3 rounded-full bg-[#285B35] px-7 py-3.5 font-semibold text-white transition hover:bg-[#1D4729]"
-                >
-                  Explore Collection
-                  <ArrowRight className="size-5" />
-                </a>
-              </div>
-
-              {/* Empty space for desktop layout */}
-              <div
-                aria-hidden="true"
-                className="hidden md:block"
-              />
+              <a
+                href="#featured"
+                className="mt-8 inline-flex items-center gap-3 rounded-full bg-[#285B35] px-7 py-3.5 font-semibold text-white transition hover:bg-[#1D4729]"
+              >
+                Explore Collection
+                <ArrowRight className="size-5" />
+              </a>
             </div>
-          </section>
 
+            {/* Empty space for desktop layout */}
+            <div aria-hidden="true" className="hidden md:block" />
+          </div>
+        </section>
 
         {/* About Lush Living */}
-        <StorefrontAbout /> 
+        <StorefrontAbout />
 
         {/* Categories */}
         <section
@@ -184,21 +178,21 @@ function HomePage() {
 
                       <div className="mt-4 flex items-center gap-2">
                         <span className="text-lg font-bold text-[#285B35]">
-                          ₹{product.price.toLocaleString('en-IN')}
+                          ₹{product.price.toLocaleString("en-IN")}
                         </span>
 
                         {product.compareAtPrice !== undefined &&
                           product.compareAtPrice > product.price && (
                             <span className="text-sm text-stone-400 line-through">
-                              ₹{product.compareAtPrice.toLocaleString('en-IN')}
+                              ₹{product.compareAtPrice.toLocaleString("en-IN")}
                             </span>
                           )}
                       </div>
 
                       <p className="mt-2 text-xs text-stone-500">
                         {product.stock > 0
-                          ? 'In Stock'
-                          : 'Currently unavailable'}
+                          ? "In Stock"
+                          : "Currently unavailable"}
                       </p>
                     </div>
                   </article>
@@ -213,11 +207,10 @@ function HomePage() {
         </section>
 
         {/* Customer Testimonials */}
-        <StorefrontTestimonials />  
-
+        <StorefrontTestimonials />
       </main>
 
       <StorefrontFooter />
     </div>
-  )
+  );
 }

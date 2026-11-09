@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { Leaf, Search, SlidersHorizontal, Sprout, X } from "lucide-react";
 
 import { useAuthStore } from "@/features/auth/store/auth.store";
@@ -371,9 +371,11 @@ function ProductsPage() {
           ) : (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {filteredProducts.map((product) => (
-                <article
-                  key={product.id}
-                  className="group overflow-hidden rounded-2xl border border-stone-200 bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                <Link
+                  key={product.slug}
+                  to="/products/$slug"
+                  params={{ slug: product.slug }}
+                  className="group block overflow-hidden rounded-2xl border border-stone-200 bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
                   <div className="relative">
                     <ProductImage product={product} />
@@ -433,7 +435,7 @@ function ProductsPage() {
                           : "In Stock"}
                     </p>
                   </div>
-                </article>
+                </Link>
               ))}
             </div>
           )}

@@ -8,16 +8,19 @@ import {
   X,
   ChevronDown,
   ArrowLeftRight,
+  ShoppingCart,
 } from "lucide-react";
 
 import { useAuthStore } from "@/features/auth/store/auth.store";
 import { getDemoUserByRole } from "@/features/auth/services/auth";
+import { useCartStore } from "@/features/cart/store/cart.store";
 
 export function StorefrontHeader() {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
   const setUser = useAuthStore((state) => state.setUser);
+  const cartItemsCount = useCartStore((state) => state.items.length);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
@@ -90,9 +93,15 @@ export function StorefrontHeader() {
 
           <Link
             to="/cart"
-            className="text-sm font-medium text-stone-700 transition-colors hover:text-green-800"
+            className="flex items-center gap-2 text-sm font-medium text-stone-700 transition-colors hover:text-green-800"
           >
+            <ShoppingCart className="size-4" />
             Cart
+            {cartItemsCount > 0 && (
+              <span className="flex min-w-5 items-center justify-center rounded-full bg-[#285B35] px-1.5 py-0.5 text-xs font-semibold text-white">
+                {cartItemsCount}
+              </span>
+            )}
           </Link>
         </nav>
 
@@ -207,6 +216,20 @@ export function StorefrontHeader() {
               >
                 Featured Products
               </a>
+
+              <Link
+                to="/cart"
+                onClick={closeMenu}
+                className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium text-stone-700 transition hover:bg-green-50 hover:text-green-800"
+              >
+                <ShoppingCart className="size-4" />
+                Cart
+                {cartItemsCount > 0 && (
+                  <span className="flex min-w-5 items-center justify-center rounded-full bg-[#285B35] px-1.5 py-0.5 text-xs font-semibold text-white">
+                    {cartItemsCount}
+                  </span>
+                )}
+              </Link>
 
               <div className="mt-3 border-t border-stone-200 px-4 pt-4">
                 <div className="flex items-center gap-2 text-sm font-semibold text-[#193D25]">

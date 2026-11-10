@@ -139,18 +139,31 @@ function HomePage() {
         {/* Featured Products */}
         <section id="featured" className="bg-[#F0F4EA] py-16">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="mb-10 text-center">
-              <span className="text-sm font-semibold tracking-widest text-green-700 uppercase">
-                Handpicked for you
-              </span>
+            <div className="relative mb-10">
+              <div className="text-center">
+                <span className="text-sm font-semibold tracking-widest text-green-700 uppercase">
+                  Handpicked for you
+                </span>
 
-              <h2 className="mt-3 text-3xl font-bold text-[#193D25] sm:text-4xl">
-                Featured Products
-              </h2>
+                <h2 className="mt-3 text-3xl font-bold text-[#193D25] sm:text-4xl">
+                  Featured Products
+                </h2>
 
-              <p className="mt-3 text-stone-600">
-                Bring home something fresh and beautiful.
-              </p>
+                <p className="mt-3 text-stone-600">
+                  Bring home something fresh and beautiful.
+                </p>
+              </div>
+
+              {/* See All Products Button */}
+              <div className="mt-6 flex justify-center lg:absolute lg:top-1/2 lg:right-0 lg:mt-0 lg:-translate-y-1/2 lg:justify-end">
+                <Link
+                  to="/products"
+                  className="inline-flex items-center gap-2 rounded-full border border-[#285B35] px-5 py-2.5 text-sm font-semibold text-[#285B35] transition-colors hover:bg-[#285B35] hover:text-white"
+                >
+                  See All Products
+                  <ArrowRight className="size-4" />
+                </Link>
+              </div>
             </div>
 
             {featuredProducts.length > 0 ? (

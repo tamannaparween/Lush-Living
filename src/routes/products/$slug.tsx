@@ -124,7 +124,8 @@ function ProductDetailsPage() {
         <section className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-10 sm:px-6 md:py-14 lg:grid-cols-2 lg:gap-16 lg:px-8">
           {/* Product Images */}
           <div>
-            <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-2xl bg-[#EEF3E9]">
+            <div className="relative mx-auto flex aspect-square w-full max-w-[480px] items-center justify-center overflow-hidden rounded-2xl bg-[#EEF3E9]">
+              {" "}
               {selectedImage && !imageError ? (
                 <img
                   src={selectedImage}
@@ -135,7 +136,6 @@ function ProductDetailsPage() {
               ) : (
                 <Sprout className="size-24 text-[#78936D]" strokeWidth={1.2} />
               )}
-
               {product.featured && (
                 <span className="absolute top-4 left-4 rounded-full bg-[#285B35] px-4 py-2 text-xs font-medium text-white">
                   Featured
@@ -156,7 +156,7 @@ function ProductDetailsPage() {
                     }}
                     aria-label={`View product image ${index + 1}`}
                     aria-pressed={selectedImageIndex === index}
-                    className={`size-20 overflow-hidden rounded-lg border-2 bg-[#EEF3E9] transition ${
+                    className={`size-16 overflow-hidden rounded-lg border-2 bg-[#EEF3E9] transition ${
                       selectedImageIndex === index
                         ? "border-[#285B35]"
                         : "border-transparent hover:border-[#78936D]"
@@ -209,39 +209,29 @@ function ProductDetailsPage() {
                 )}
             </div>
 
+            {/* Stock Status Badge */}
+            <div className="mt-4">
+              {product.stock === 0 ? (
+                <span className="inline-flex items-center rounded-full bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700">
+                  Out of Stock
+                </span>
+              ) : product.stock <= 5 ? (
+                <span className="inline-flex items-center rounded-full bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-700">
+                  Only {product.stock} left in stock
+                </span>
+              ) : (
+                <span className="inline-flex items-center rounded-full bg-green-50 px-3 py-1.5 text-xs font-semibold text-green-700">
+                  In Stock
+                </span>
+              )}
+            </div>
+
             <div className="my-7 border-t border-stone-200" />
 
             {/* Description */}
-            <div>
-              <h2 className="text-lg font-semibold text-[#193D25]">
-                Product Description
-              </h2>
-
-              <p className="mt-3 text-sm leading-7 text-stone-600">
-                {product.description}
-              </p>
-            </div>
-
-            {/* Availability */}
-            <div className="mt-8 rounded-xl border border-stone-200 bg-white p-5">
-              <h2 className="font-semibold text-[#193D25]">Availability</h2>
-
-              <p
-                className={`mt-3 text-sm font-medium ${
-                  product.stock === 0
-                    ? "text-red-600"
-                    : product.stock <= 5
-                      ? "text-amber-600"
-                      : "text-green-700"
-                }`}
-              >
-                {product.stock === 0
-                  ? "Currently Out of Stock"
-                  : product.stock <= 5
-                    ? `Only ${product.stock} left in stock`
-                    : "In Stock"}
-              </p>
-            </div>
+            <p className="text-sm leading-7 text-stone-600">
+              {product.description}
+            </p>
 
             {/* Quantity Selector */}
 
@@ -281,14 +271,6 @@ function ProductDetailsPage() {
               Bring a little more nature into your everyday space with Lush
               Living.
             </p>
-
-            <Link
-              to="/products"
-              className="mt-8 inline-flex w-fit items-center gap-2 rounded-lg border border-[#285B35] px-5 py-3 text-sm font-medium text-[#285B35] transition hover:bg-[#EEF3E9]"
-            >
-              <ArrowLeft className="size-4" />
-              Continue Shopping
-            </Link>
           </div>
         </section>
       </main>

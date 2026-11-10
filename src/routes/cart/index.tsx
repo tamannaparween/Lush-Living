@@ -1,5 +1,14 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { ArrowLeft, Leaf, ShoppingBag, Sprout } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Leaf,
+  Minus,
+  Plus,
+  ShoppingBag,
+  Sprout,
+  Trash2,
+} from "lucide-react";
 
 import { useAuthStore } from "@/features/auth/store/auth.store";
 import { useCartStore } from "@/features/cart/store/cart.store";
@@ -24,6 +33,8 @@ export const Route = createFileRoute("/cart/")({
 
 function CartPage() {
   const items = useCartStore((state) => state.items);
+  const updateQuantity = useCartStore((state) => state.updateQuantity);
+  const removeItem = useCartStore((state) => state.removeItem);
 
   const cartProducts = items.flatMap((item) => {
     const product = getProductById(item.productId);
@@ -35,10 +46,23 @@ function CartPage() {
     return [{ ...item, product }];
   });
 
-  const totalItems = cartProducts.reduce(
-    (total, item) => total + item.quantity,
-    0,
-  );
+  const totalItems = cartProducts.length;
+
+  const handleDecrease = (productId: string, quantity: number) => {
+    if (quantity > 1) {
+      updateQuantity(productId, quantity - 1);
+    }
+  };
+
+  const handleIncrease = (
+    productId: string,
+    quantity: number,
+    stock: number,
+  ) => {
+    if (quantity < stock) {
+      updateQuantity(productId, quantity + 1);
+    }
+  };
 
   const formatPrice = (price: number) =>
     new Intl.NumberFormat("en-IN", {
@@ -126,12 +150,17 @@ function CartPage() {
                     className="flex flex-col gap-5 rounded-2xl border border-stone-200 bg-white p-4 sm:flex-row sm:items-center sm:p-5"
                   >
                     {/* Product Image */}
-                    <div className="flex size-28 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#EEF3E9] sm:size-32">
+                    <Link
+                      to="/products/$slug"
+                      params={{ slug: product.slug }}
+                      aria-label={`View ${product.name} details`}
+                      className="flex size-28 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#EEF3E9] sm:size-32"
+                    >
                       {product.images[0] ? (
                         <img
                           src={product.images[0]}
                           alt={product.name}
-                          className="size-full object-cover"
+                          className="size-full object-cover transition duration-300 hover:scale-105"
                           onError={(event) => {
                             event.currentTarget.style.display = "none";
                           }}
@@ -142,12 +171,18 @@ function CartPage() {
                           strokeWidth={1.2}
                         />
                       )}
-                    </div>
+                    </Link>
 
                     {/* Product Information */}
                     <div className="min-w-0 flex-1">
                       <h3 className="text-lg font-semibold text-[#193D25]">
-                        {product.name}
+                        <Link
+                          to="/products/$slug"
+                          params={{ slug: product.slug }}
+                          className="transition hover:text-[#78936D]"
+                        >
+                          {product.name}
+                        </Link>
                       </h3>
 
                       <p className="mt-2 line-clamp-2 text-sm leading-6 text-stone-500">
@@ -158,14 +193,49 @@ function CartPage() {
                         {formatPrice(product.price)} per item
                       </p>
                     </div>
-
                     {/* Quantity and Price */}
-                    <div className="flex items-center justify-between gap-5 border-t border-stone-100 pt-4 sm:min-w-40 sm:flex-col sm:items-end sm:justify-center sm:border-t-0 sm:pt-0">
-                      <div className="text-sm text-stone-500">
-                        Quantity:{" "}
-                        <span className="font-semibold text-[#193D25]">
-                          {quantity}
-                        </span>
+                    <div className="flex flex-col items-end justify-center gap-4 border-t border-stone-100 pt-4 sm:min-w-40 sm:border-t-0 sm:pt-0">
+                      <div className="flex flex-wrap items-center gap-3">
+                        <div className="flex items-center rounded-lg border border-[#DCE5D5]">
+                          <button
+                            type="button"
+                            onClick={() => handleDecrease(product.id, quantity)}
+                            disabled={quantity <= 1}
+                            aria-label={`Decrease ${product.name} quantity`}
+                            className="p-2 text-[#3F5B45] transition hover:bg-[#F0F4E9] disabled:cursor-not-allowed disabled:opacity-40"
+                          >
+                            <Minus size={16} />
+                          </button>
+
+                          <span className="min-w-8 text-center text-sm font-medium text-[#263D2C]">
+                            {quantity}
+                          </span>
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handleIncrease(
+                                product.id,
+                                quantity,
+                                product.stock,
+                              )
+                            }
+                            disabled={quantity >= product.stock}
+                            aria-label={`Increase ${product.name} quantity`}
+                            className="p-2 text-[#3F5B45] transition hover:bg-[#F0F4E9] disabled:cursor-not-allowed disabled:opacity-40"
+                          >
+                            <Plus size={16} />
+                          </button>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => removeItem(product.id)}
+                          className="flex items-center gap-1.5 text-sm text-red-600 transition hover:text-red-700"
+                        >
+                          <Trash2 size={15} />
+                          Remove
+                        </button>
                       </div>
 
                       <p className="text-lg font-bold text-[#285B35]">
@@ -174,6 +244,15 @@ function CartPage() {
                     </div>
                   </article>
                 ))}
+              </div>
+              <div className="mt-8 flex justify-end">
+                <Link
+                  to="/checkout"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#285B35] px-8 py-3 font-semibold text-white transition hover:bg-[#193D25]"
+                >
+                  Proceed to Checkout
+                  <ArrowRight className="size-5" />
+                </Link>
               </div>
             </>
           )}

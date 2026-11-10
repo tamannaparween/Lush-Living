@@ -6,8 +6,8 @@ import { useAuthStore } from "@/features/auth/store/auth.store";
 import { getActiveCategories } from "@/features/categories/services/category.service";
 import { getActiveProducts } from "@/features/products/services/product.service";
 import type { Product } from "@/features/products/types/product.types";
-import { StorefrontHeader } from "@/features/storefront/components/storefront-header";
-import { StorefrontFooter } from "@/features/storefront/components/storefront-footer";
+import { StorefrontHeader } from "@/components/header";
+import { StorefrontFooter } from "@/components/footer";
 
 export const Route = createFileRoute("/products/")({
   beforeLoad: () => {

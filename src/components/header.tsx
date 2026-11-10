@@ -87,6 +87,13 @@ export function StorefrontHeader() {
           >
             Products
           </Link>
+
+          <Link
+            to="/cart"
+            className="text-sm font-medium text-stone-700 transition-colors hover:text-green-800"
+          >
+            Cart
+          </Link>
         </nav>
 
         {/* Customer Account */}

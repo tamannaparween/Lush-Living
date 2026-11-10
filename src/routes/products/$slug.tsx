@@ -1,12 +1,18 @@
 import { useState } from "react";
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { ArrowLeft, Leaf, Sprout } from "lucide-react";
-
+import {
+  ArrowLeft,
+  ArrowRight,
+  Leaf,
+  ShoppingCart,
+  Sprout,
+} from "lucide-react";
 import { useAuthStore } from "@/features/auth/store/auth.store";
 import { getActiveCategories } from "@/features/categories/services/category.service";
 import { getProductBySlug } from "@/features/products/services/product.service";
-import { StorefrontHeader } from "@/features/storefront/components/storefront-header";
-import { StorefrontFooter } from "@/features/storefront/components/storefront-footer";
+import { StorefrontHeader } from "@/components/header";
+import { StorefrontFooter } from "@/components/footer";
+import { useCartStore } from "@/features/cart/store/cart.store";
 
 export const Route = createFileRoute("/products/$slug")({
   beforeLoad: () => {
@@ -31,6 +37,29 @@ function ProductDetailsPage() {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [imageError, setImageError] = useState(false);
 
+  const [cartMessage, setCartMessage] = useState("");
+
+  const items = useCartStore((state) => state.items);
+  const addItem = useCartStore((state) => state.addItem);
+
+  const cartItem = items.find((item) => item.productId === product?.id);
+
+  const cartQuantity = cartItem?.quantity ?? 0;
+
+  const handleAddToCart = () => {
+    if (!product || product.stock <= 0) {
+      return;
+    }
+
+    if (cartQuantity >= product.stock) {
+      setCartMessage("You have already added the available stock.");
+      return;
+    }
+
+    addItem(product.id, 1);
+    setCartMessage(`${product.name} added to your cart successfully!`);
+  };
+
   const formatPrice = (price: number) =>
     new Intl.NumberFormat("en-IN", {
       style: "currency",
@@ -44,8 +73,6 @@ function ProductDetailsPage() {
     : "";
 
   const selectedImage = product?.images[selectedImageIndex];
-
-  console.log("Product Details Page Rendered:", product);
 
   if (!product || product.status !== "active") {
     return (
@@ -215,6 +242,40 @@ function ProductDetailsPage() {
                     : "In Stock"}
               </p>
             </div>
+
+            {/* Quantity Selector */}
+
+            {/* Add to Cart */}
+            {/* Cart Action */}
+            {cartQuantity > 0 ? (
+              <Link
+                to="/cart"
+                className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#285B35] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#193D25] sm:w-fit"
+              >
+                <ShoppingCart className="size-5" />
+                Go to Cart
+                <ArrowRight className="size-4" />
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={handleAddToCart}
+                disabled={product.stock <= 0}
+                className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#285B35] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#193D25] disabled:cursor-not-allowed disabled:bg-stone-400 sm:w-fit"
+              >
+                <ShoppingCart className="size-5" />
+                {product.stock <= 0 ? "Out of Stock" : "Add to Cart"}
+              </button>
+            )}
+
+            {cartMessage && (
+              <p
+                role="status"
+                className="mt-3 text-sm font-medium text-[#285B35]"
+              >
+                {cartMessage}
+              </p>
+            )}
 
             <p className="mt-6 text-xs leading-6 text-stone-400">
               Bring a little more nature into your everyday space with Lush

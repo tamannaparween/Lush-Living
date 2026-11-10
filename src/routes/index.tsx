@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { ArrowRight, Leaf, Sprout } from "lucide-react";
 
 import { useAuthStore } from "@/features/auth/store/auth.store";
@@ -148,9 +148,11 @@ function HomePage() {
             {featuredProducts.length > 0 ? (
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 {featuredProducts.map((product) => (
-                  <article
+                  <Link
                     key={product.id}
-                    className="group overflow-hidden rounded-2xl border border-[#E5EBDD] bg-white transition duration-300 hover:-translate-y-1 hover:shadow-lg"
+                    to="/products/$slug"
+                    params={{ slug: product.slug }}
+                    className="group block overflow-hidden rounded-2xl border border-[#E5EBDD] bg-white transition duration-300 hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#285B35]"
                   >
                     {/* Product Image */}
                     <div className="h-56 w-full overflow-hidden bg-[#F7F8F3]">
@@ -174,6 +176,7 @@ function HomePage() {
                       )}
                     </div>
 
+                    {/* Product Information */}
                     <div className="p-5">
                       <h3 className="font-semibold text-stone-900">
                         {product.name}
@@ -202,7 +205,7 @@ function HomePage() {
                           : "Currently unavailable"}
                       </p>
                     </div>
-                  </article>
+                  </Link>
                 ))}
               </div>
             ) : (

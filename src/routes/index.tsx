@@ -99,26 +99,34 @@ function HomePage() {
           {categories.length > 0 ? (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
               {categories.map((category) => (
-                <a
+                <div
                   key={category.id}
-                  href="#featured"
-                  className="group rounded-2xl border border-[#E6EBDD] bg-white p-6 text-center transition hover:-translate-y-1 hover:border-[#A8BE9A] hover:shadow-lg"
+                  className="group flex flex-col items-center text-center"
                 >
-                  <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-[#EEF3E9] transition group-hover:bg-[#DFEBD7]">
-                    <Sprout
-                      className="size-8 text-[#52764A]"
-                      strokeWidth={1.4}
+                  {/* Category Image */}
+                  <div className="size-32 overflow-hidden rounded-full bg-[#EEF3E9] ring-4 ring-[#EEF3E9] transition-all duration-300 group-hover:ring-[#C8D8BC] sm:size-40">
+                    <img
+                      src={category.image}
+                      alt={category.name}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      onError={(event) => {
+                        event.currentTarget.style.display = "none";
+                      }}
                     />
                   </div>
 
-                  <h3 className="mt-4 font-semibold text-stone-800">
-                    {category.name}
-                  </h3>
+                  {/* Category Information */}
+                  <div className="mt-5 max-w-48">
+                    <h3 className="font-semibold text-stone-800 transition-colors group-hover:text-[#6F8F5D]">
+                      {category.name}
+                    </h3>
 
-                  <p className="mt-2 line-clamp-2 text-xs leading-5 text-stone-500">
-                    {category.description}
-                  </p>
-                </a>
+                    <p className="mt-2 line-clamp-2 text-xs leading-5 text-stone-500">
+                      {category.description}
+                    </p>
+                  </div>
+                </div>
               ))}
             </div>
           ) : (

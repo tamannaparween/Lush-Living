@@ -150,20 +150,27 @@ function HomePage() {
                 {featuredProducts.map((product) => (
                   <article
                     key={product.id}
-                    className="overflow-hidden rounded-2xl border border-[#E5EBDD] bg-white transition hover:-translate-y-1 hover:shadow-lg"
+                    className="group overflow-hidden rounded-2xl border border-[#E5EBDD] bg-white transition duration-300 hover:-translate-y-1 hover:shadow-lg"
                   >
-                    <div className="relative flex h-48 items-center justify-center bg-gradient-to-br from-[#E9F0E2] to-[#D5E4CC]">
-                      <div className="flex size-28 items-center justify-center rounded-full bg-white/50">
-                        <Sprout
-                          className="size-16 text-[#52764A]"
-                          strokeWidth={1.2}
+                    {/* Product Image */}
+                    <div className="h-56 w-full overflow-hidden bg-[#F7F8F3]">
+                      {product.images[0] ? (
+                        <img
+                          src={product.images[0]}
+                          alt={product.name}
+                          loading="lazy"
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          onError={(event) => {
+                            event.currentTarget.style.display = "none";
+                          }}
                         />
-                      </div>
-
-                      {product.stock === 0 && (
-                        <span className="absolute top-3 right-3 rounded-full bg-stone-800 px-3 py-1 text-xs font-medium text-white">
-                          Out of Stock
-                        </span>
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center">
+                          <Sprout
+                            className="size-12 text-[#78936D]"
+                            strokeWidth={1.2}
+                          />
+                        </div>
                       )}
                     </div>
 

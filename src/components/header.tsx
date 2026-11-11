@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import {
-  Leaf,
   LogOut,
   Menu,
   UserRound,
@@ -68,8 +67,11 @@ export function StorefrontHeader() {
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Brand */}
         <Link to="/" onClick={closeMenu} className="flex items-center gap-2">
-          <Leaf className="size-7 text-green-800" />
-
+          <img
+            src="/favicon.png"
+            alt="Lush Living"
+            className="size-8 shrink-0 object-contain"
+          />
           <span className="text-xl font-bold tracking-tight text-green-900 sm:text-2xl">
             Lush Living
           </span>

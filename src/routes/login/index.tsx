@@ -1,4 +1,4 @@
-import { Leaf, Sprout } from "lucide-react";
+import { Sprout } from "lucide-react";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { LoginForm } from "@/routes/login/-components/login-form";
@@ -65,9 +65,11 @@ function RouteComponent() {
             animation: "login-content-reveal 0.8s ease-out 0.2s both",
           }}
         >
-          <div className="flex size-11 items-center justify-center rounded-xl bg-[#F0F4E9] text-[#193D25]">
-            <Leaf className="size-6" />
-          </div>
+          <img
+            src="/favicon.svg"
+            alt="Lush Living"
+            className="size-11 shrink-0 object-contain"
+          />
 
           <span className="text-2xl font-bold tracking-tight">
             Lush Living

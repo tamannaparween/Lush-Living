@@ -66,7 +66,7 @@ function RouteComponent() {
           }}
         >
           <img
-            src="/favicon.svg"
+            src="/favicon.png"
             alt="Lush Living"
             className="size-11 shrink-0 object-contain"
           />
